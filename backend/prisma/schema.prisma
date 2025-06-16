@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 Int        @id @default(autoincrement())
+  email              String     @unique
+  fullname           String?
+  phone              String?
+  position           String
+  password           String
+  isAdmin            Boolean
+  vacationDaysTotal  Int        @default(30)
+  vacationDaysUsed   Int        @default(0)
+  vacations          Vacation[]
+}
+
+
+model Vacation {
+  id        Int            @id @default(autoincrement())
+  startDate DateTime
+  endDate   DateTime
+  type      VacationType
+  status    VacationStatus
+  userId    Int
+  user      User           @relation(fields: [userId], references: [id])
+}
+
+enum VacationType {
+  Urlaub
+  Krankheit
+  Mutterschutz
+  Elternzeit
+  Pflegezeit
+  Miscellaneous
+  Kindkrankentage
+}
+
+enum VacationStatus {
+  pending
+  approved
+  rejected
+}
