@@ -15,28 +15,34 @@ datasource db {
 }
 
 model User {
-  id                 Int        @id @default(autoincrement())
-  email              String     @unique
-  fullname           String?
-  phone              String?
-  position           String
-  password           String
-  isAdmin            Boolean
-  vacationDaysTotal  Int        @default(30)
-  vacationDaysUsed   Int        @default(0)
-  vacations          Vacation[]
+  id               Int        @id @default(autoincrement())
+  email            String     @unique
+  fullname         String?
+  phone            String?
+  position         String
+  password         String?
+  isAdmin          Boolean
+  vacationDaysUsed Int        @default(0)
+  vacationDaysTotal Int      @default(30)
+  profilePicture   String?
+  provider  String
+  googleId String?
+  githubId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  vacations        Vacation[]
 }
-
 
 model Vacation {
-  id        Int            @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   startDate DateTime
   endDate   DateTime
-  type      VacationType
-  status    VacationStatus
+  type      String
+  status    String
+  user      User     @relation(fields: [userId], references: [id])
   userId    Int
-  user      User           @relation(fields: [userId], references: [id])
 }
+
 
 enum VacationType {
   Urlaub
