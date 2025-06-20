@@ -103,3 +103,35 @@ export const loginUser = async (req: Request, res: Response) : Promise<void> => 
     res.status(500).json({ message: "Login failed" });
   }
 };
+
+
+export const getMe = async (req: Request, res: Response) : Promise<void> => {
+  try {
+    const user = req.user;
+    const foundUser = await prisma.user.findUnique({
+      where: {id: user?.id},
+      select: {
+         id: true,
+        email: true,
+        fullname: true,
+        phone: true,
+        position: true,
+        isAdmin: true,
+        profilePicture: true,
+        provider: true,
+        vacationDaysTotal: true,
+        vacationDaysUsed: true,
+        createdAt: true,
+        updatedAt: true,
+      }
+    })
+
+    if(!foundUser){
+       res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(foundUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to get user" });
+  }
+}
